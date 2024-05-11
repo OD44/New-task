@@ -2,13 +2,9 @@ const sendEmail = require("../Middleware/nodemailer");
 const { isStrongPassword } = require("validator");
 const userModel = require("../Model/users");
 const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs')
 require('dotenv').config();
 
-const generateRandom = () => {
-	return Math.random().toString() + 'hgjk';
-};
 
 const registerAccount = async(req, res)=>{
     try {
@@ -175,64 +171,6 @@ const loginAccount = async (req, res) => {
 	}
 };
 
-const updateUserAccount = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const { email, firstName, lastName } = req.body;
-
-        let user = await userModel.findById(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        if (req.body) {
-            user.email = email.toLowerCase();
-            user.firstName = firstName;
-            user.lastName = lastName;
-        }
-        
-        await user.save();
-
-        res.status(200).json({
-            success: true,
-            data: user,
-            message: 'User updated successfully',
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({ message: error.message, success: false });
-    }
-};
-
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await userModel.find();
-        res.status(200).json({
-            success: true,
-            data: users,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Server Error', success: false });
-    }
-};
-
-const getSingleUser = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const user = await userModel.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found', success: false });
-        }
-        res.status(200).json({
-            success: true,
-            data: user,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Server Error', success: false });
-    }
-};
 
 const Logout = async(req, res)=>{
     req.logout(function(err){
@@ -265,79 +203,11 @@ const verifyAccount = async (req, res) => {
 		res.status(500).json({error: 'Server Error'});
 	}
 };
-// const forgetPassword = async (req, res) =>{
-//     const {email} = req.body;
-//     try{
-//         const user = await userModel.findOne({email});
-//         if(!user) {
-//             return res.status(404).json({error: "User not found"})
-//         }
-//         const token = generateRandom();
-//         user.resetToken = token;
-//         user.resetExpires = Date.now() + 3600000;
 
-//         await user.save();
-
-//         const resetLink = `Dear ${user?.first_name}, Click the link to reset your password: ${process.env.localhost_url}/user/update/${token}`;
-//         console.log("reset link", resetLink);
-
-//         await sendEmail(
-//             process.env.admin_email,
-//             email,
-//             resetLink,
-//             "Password Reset Link From Tulu Wallet"
-//         )
-//         return res.status(200).json({message: " Mail sent successfully"})
-
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({error: "Server error"})
-//     }
-// }
-
-// const updatePassword = async (req, res) =>{
-//     try{
-//         const { password, confirmPassword} = req.body;
-//         if(!password || !confirmPassword){
-//             return res.status(400).json({error: "Password and Confirm Password are required"})
-//         }
-//         if(password !== confirmPassword){
-//             return res.status(400).json({error: "Password do not match"})
-//         }
-//         const user = await userModel.findOne({
-//             resetToken: req.params.token,
-//             resetExpires: {$gte: Date.now()},
-//         });
-//         if (!user){
-//             return res.status(400).json({error: "Password reset token is invalid or has expired"})
-//         }
-
-//         user.password = password;
-// 		const salt = await bcrypt.genSalt(10);
-// 		const hash = await bcrypt.hash(password, salt);
-// 		user.password = hash;
-
-//         user.resetToken = undefined;
-//         user.resetExpires = undefined;
-
-//         await user.save();
-
-//         return res.status(200).json({ msg: 'Password successfully reset' });
-
-//     } catch (error){
-//         console.log(error)
-//         res.status(500).json({error: "Server error"})
-//     }
-// }
 
 module.exports = {
     registerAccount,
     loginAccount,
-    updateUserAccount,
-    getAllUsers,
-    getSingleUser,
     Logout,
-	verifyAccount,
-    // forgetPassword,
-    // updatePassword
+	verifyAccount
 }
