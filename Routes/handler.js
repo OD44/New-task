@@ -11,7 +11,5 @@ router.route("/users").get([isLoggedIn], getAllUsers)
 router.route("/users/:userId").get([isLoggedIn], getSingleUser)
 router.route("/users/:userId").delete([isLoggedIn], deleteUser)
 
-// router.route("/reset").post([isLoggedIn],forgetPassword)
-// router.route("/update/:token").post(updatePassword)
 
 module.exports = router
