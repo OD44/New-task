@@ -6,10 +6,10 @@ const { isLoggedIn } = require('../Middleware/auth')
 
 const router = express.Router()
 
-router.route("/updateuser/:userId").patch([isLoggedIn], updateUserAccount)
+router.route("/update-user/:userId").patch([isLoggedIn], updateUserAccount)
 router.route("/users").get([isLoggedIn], getAllUsers)
 router.route("/users/:userId").get([isLoggedIn], getSingleUser)
-router.route("/users/:userId").delete([isLoggedIn], deleteUser)
+router.route("/delete-user/:userId").delete([isLoggedIn], deleteUser)
 
 
 module.exports = router
